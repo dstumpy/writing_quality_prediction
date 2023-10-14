@@ -29,6 +29,11 @@
         "eamodio.gitlens",
         "mutantdino.resourcemonitor",
         "ms-vsliveshare.vsliveshare",
+        "ms-toolsai.jupyter",
+        "AMiner.codegeex",
+        "ms-python.black-formatter",
+        "metaseed.metago",
+        "ms-python.vscode-pylance",
     ],
 
     // Start container with settings specified in docker-compose.yaml

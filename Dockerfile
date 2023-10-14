@@ -46,8 +46,10 @@ FROM manual as ide
 RUN echo 'export PATH=$PATH:/root/.local/bin' >> ~/.bashrc
 
 # install code-server
-RUN curl -fOL https://github.com/coder/code-server/releases/download/v4.1.0/code-server_4.1.0_amd64.deb; \
-    dpkg -i code-server_4.1.0_amd64.deb
+#RUN curl -fOL https://github.com/coder/code-server/releases/download/v4.1.0/code-server_4.1.0_amd64.deb; \
+#    dpkg -i code-server_4.1.0_amd64.deb
+RUN curl -fOL https://github.com/coder/code-server/releases/download/v4.17.1/code-server_4.17.1_amd64.deb; \
+    dpkg -i code-server_4.17.1_amd64.deb
 # extensions to code-server
 RUN code-server --install-extension ms-python.python \
     code-server --install-extension ms-pyright.pyright \

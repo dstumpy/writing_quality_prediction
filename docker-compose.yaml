@@ -17,11 +17,13 @@ services:
       - pre-commit:/root/.cache/pre-commit
       - poetry-cache:/root/.cache/pypoetry
       - $HOME/.gitconfig:/root/.gitconfig
-      - /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock
-    #  - $SSH_AUTH_SOCK:/tmp/authsock
-    environment:
-    #  SSH_AUTH_SOCK: /tmp/authsock
-      SSH_AUTH_SOCK: /ssh-agent
+      # 1.0 - /run/host-services/ssh-auth.sock:/run/host-services/ssh-auth.sock
+      # 2.0 (works)- /var/folders/d3/99dqnlcj3d53w4j9hx7sj43smd55py/T//ssh-3XEVfSc28dw1/agent.1285:/var/folders/d3/99dqnlcj3d53w4j9hx7sj43smd55py/T//ssh-3XEVfSc28dw1/agent.1285
+      # 2.1 (fails)- $SSH_AUTH_SOCK:/var/folders/d3/99dqnlcj3d53w4j9hx7sj43smd55py/T//ssh-3XEVfSc28dw1/agent.1285
+    #environment:
+      #SSH_AUTH_SOCK: /tmp/authsock
+      # 1.0 SSH_AUTH_SOCK: /ssh-agent
+      # 2.0 (works)- SSH_AUTH_SOCK=$SSH_AUTH_SOCK
     env_file:
       - .env_dev
     restart: unless-stopped
