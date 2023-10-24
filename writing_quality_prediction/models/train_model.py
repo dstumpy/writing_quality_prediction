@@ -2,31 +2,28 @@
 # %%
 
 from writing_quality_prediction.data.make_dataset import load_train_data
-from writing_quality_prediction.features.build_features import generate_features
+from writing_quality_prediction.features.build_features import (
+    generate_features,
+    preprocess_data,
+)
+from writing_quality_prediction.models.model_selection import custom_train_test_split
 import pandas as pd
-from typing import Tuple
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_validate
 from sklearn.model_selection import KFold
 
 
-def custom_train_test_split(
-    X: pd.DataFrame, y: pd.DataFrame, train_size: float = 0.8, random_state: int = 42
-) -> Tuple[pd.DataFrame, pd.DataFrame, pd.DataFrame, pd.DataFrame]:
-    y_train = y.sample(frac=train_size)
-    y_test = y.query("id not in @y_train.id")
-
-    X_train = X.query("id in @y_train.id")
-    X_test = X.query("id in @y_test.id")
-
-    return X_train, y_train, X_test, y_test
-
-
 X, y = load_train_data()
 
+ohe_features = ["activity", "down_event", "up_event", "text_change"]
+oe_features = ["id"]
+
 # %%
-X_agg, y = generate_features(X, y)
+# X = preprocess_data(X=X, oe_features=oe_features, ohe_features=ohe_features)
+
+# %%
+X_agg, y = generate_features(X, y, ohe_features=ohe_features)
 
 # %%
 X_train, y_train, X_test, y_test = custom_train_test_split(X=X_agg, y=y)
@@ -54,3 +51,38 @@ scores = cross_validate(
     return_train_score=True,
     scoring="neg_root_mean_squared_error",
 )
+
+# %%
+# Hyperparameter tuning
+
+
+from sklearn.model_selection import GridSearchCV
+
+param_grid = [
+    {
+        "n_estimators": [
+            100,
+            500,
+            1000,
+        ],
+        "max_features": [1],
+        "max_depth": [1, 2],
+        "min_samples_split": [2, 8],
+        "min_samples_leaf": [2, 6],
+        "bootstrap": [False],
+    },
+]
+
+model = RandomForestRegressor()
+grid_search = GridSearchCV(
+    model,
+    param_grid,
+    cv=5,
+    scoring="neg_root_mean_squared_error",
+    verbose=2,
+    return_train_score=True,
+    n_jobs=-1,
+)
+grid_search.fit(X_train, y_train)
+
+# %%
